@@ -1,0 +1,11 @@
+#source this file
+
+setup-watches(){
+    cd $TRENT_ROOT 
+    clear-logschanged
+    ls -a | grep 'stack-work' | sed "s@\$@/logs@" | xargs --verbose inotifywait -m -o logschanged -e modify --format %w%f
+}
+
+clear-logschanged(){
+    truncate logschanged --size 0     
+}
