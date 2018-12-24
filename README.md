@@ -83,7 +83,7 @@ source ~/.vim/plugged/vim-stackThoseErrorsOfHs/bashScripts/watchStuff.sh
 
 you should now be able to access both `clear-logschanged` and `setup-watches` after resourcing your profile.
 
-## mappings/ your vimrc
+# mappings/usage
 This plugin makes one make command `StackReadErrors`.  This will trigger the reading of the `logschanged` file and the production of the `.errors` file (done by the read-errors script).
 It will also get vim to read the .errors file and then jump to the last error in the file, most of the time this will be the one you can see at the bottom of your build window.  You can retrigger this process repeatedly.
 
@@ -95,3 +95,6 @@ let g:stackThoseErrorsCreateMappings = 1
 
 this will setup a call to the command when you press `<leader>re` the mnenomic for this is r[ead]e[rrors].  Leader defaults to `\` and basically represents vim's big open space for user defined key-mappings.  See `:help mapleader` for more details
 Alternately you could just run the command directly or set up your own keybinding.
+
+From time to time you might also want to manually trigger clearing the logschanged file - for instance if you are seeing warnings from some other package that got built as a dependency or similar.
+to do this you can run the bash function `clear-logschanged` from the commandline.  This doesn't actually do anything to the log files and is purely used by this plugin to track what log files it has seen change which it then greps through to find errors.
