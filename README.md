@@ -57,8 +57,13 @@ This assumes that you have a ~/.local/bin folder that is on your path.  As long 
 if you use vim plug you can get the `read-errors` script installed automatically by adding the following to your .vimrc:
 
 ```
-Plug 'JonnyRa/vimstackThoseErrorsOfHs', { 'do': './install' }
+Plug 'JonnyRa/vim-stackThoseErrorsOfHs', { 'do': './install' }
+let g:stackThoseErrorsCreateMappings = 1 
 ```
+
+You then need to save and trigger installation using `:PlugInstall`
+
+The second line there sets up the plugin's default bindings (see below)
 
 this will make a link to `read-errors` in `~/.local/bin`
 
