@@ -89,6 +89,7 @@ source ~/.vim/plugged/vim-stackThoseErrorsOfHs/bashScripts/watchStuff.sh
 you should now be able to access both `clear-logschanged` and `setup-watches` after resourcing your profile.
 
 # mappings/usage
+
 This plugin makes one make command `StackReadErrors`.  This will trigger the reading of the `logschanged` file and the production of the `.errors` file (done by the read-errors script).
 It will also get vim to read the .errors file and then jump to the last error in the file, most of the time this will be the one you can see at the bottom of your build window.  You can retrigger this process repeatedly.
 
@@ -103,3 +104,19 @@ Alternately you could just run the command directly or set up your own keybindin
 
 From time to time you might also want to manually trigger clearing the logschanged file - for instance if you are seeing warnings from some other package that got built as a dependency or similar.
 to do this you can run the bash function `clear-logschanged` from the commandline.  This doesn't actually do anything to the log files and is purely used by this plugin to track what log files it has seen change which it then greps through to find errors.
+
+## vim stuff
+The plugin just piggybacks off an already existent vim feature known as the quickfix window (see `:h quickfix`).   You shouldn't need to edit any quickfix related settings (like errorformat) for this to work.
+
+There are a load of quickfix related commands which are all prefixed with `c` for some reason (possibly this is for compiler?)!  A useful on is `:copen` which shows the quickfix window.  You can jump to errors
+by selecting them in there and pressing enter and you can also do the same thing remotely (without being in or seeing the window) by using commands like `:cn[ext] :cN[ext] (moves backwards) :cla[st]` etc.
+Looking at help for any of those will drop you in the right place to see the rest of the commands.
+
+# configuration
+In order for the plugin to work you'll need to run the bash function `setup-watches` in the working directory for your project.  Generally this will be the repository root/wherever you run stack from.
+The different parts of the plugin just communicate through the file system so you can have multiple different vim's/projects open and things should _just work_, however all the scripts just operate locally so you'll need to set your `:pwd` appropriately using `:cd` or `:lcd` accordingly.
+
+If you use tmux you can just add setup-watches to your startup script and then forget about it!
+
+# debugging
+If anything doesn't work please raise issues on here!  Debugging the output mostly involves looking at the `.errors` and `logschanged` files and then poking around in the logs that are pointed to in the file.
