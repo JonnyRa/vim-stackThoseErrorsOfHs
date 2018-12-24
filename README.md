@@ -11,7 +11,7 @@ The approach this tool takes is to read the logs produced by stack when it build
 Stack doesn't output logs for the test part of a build in the same way as the rest, this currently means this tool doesn't work for tests.
 I've logged an issue for this at https://github.com/commercialhaskell/stack/issues/3834 but so far haven't done anything about fixing it.
 
-An alternative to improving stack would be to possibly use tee to get hold of the output more directly, I haven't fiddled around with this though and am not sure it interacts with file-watch (which is my preferred way of running).  
+An alternative to improving stack would be to possibly use tee to get hold of the output more directly, I haven't fiddled around with this though and am not sure how it interacts with file-watch (which is my preferred way of running).  
 I also don't know how you would know a particular build had ended (eg at what point to discard old output - otherwise there would be the danger of reporting errors/warnings for ever!).
 
 # installation
