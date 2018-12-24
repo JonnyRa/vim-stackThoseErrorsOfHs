@@ -1,3 +1,6 @@
+> Oh vim!  Stack those errors of hs, put them all in a pile for the world to see and thus your pain will become less!
+Anonymous 1702
+
 # vim-stackThoseErrorsOfHs
 A few bits and pieces to scrape errors from stack logs into vim.
 
