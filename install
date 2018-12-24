@@ -1,3 +1,2 @@
 #!/bin/bash
-
-ln -s -f bashScripts/read-errors ~/.local/bin/read-errors
+ln -s -f ~/.vim/plugged/vim-stackThoseErrorsOfHs/bashScripts/read-errors ~/.local/bin/read-errors
