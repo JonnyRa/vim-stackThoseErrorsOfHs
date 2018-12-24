@@ -4,7 +4,7 @@ function! StackReadErrors()
   "call the bash script (needs to be on path)
   silent !read-errors
   redraw!
-  StackOpenErrors
+  silent StackOpenErrors
   clast
 endfunction
 
