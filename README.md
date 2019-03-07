@@ -21,7 +21,7 @@ I also don't know how you would know a particular build had ended (eg at what po
 There are quite a few moving parts to the tool:
 
 ## dependencies
-this plugin needs a few things installed to work properly:
+This now just depends on:
 
 ### inotify-tools
 To see what things are getting built it watches stack's log files.  This uses a utility called inotifywait.
@@ -103,6 +103,3 @@ If you use tmux you can just add setup-watches to your startup script (in the ap
 
 # debugging
 If anything doesn't work please raise issues on here!  Debugging the output mostly involves looking at the `.errors` and `logschanged` files and then poking around in the logs that are pointed to in the file.
-
-# ansifilter
-The tool no longer depends on ansifilter as I realised you can filter out the '-color' logs
