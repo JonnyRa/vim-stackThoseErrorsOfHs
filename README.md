@@ -104,3 +104,5 @@ If you use tmux you can just add setup-watches to your startup script (in the ap
 
 # debugging
 If anything doesn't work please raise issues on here!  Debugging the output mostly involves looking at the `.errors` and `logschanged` files and then poking around in the logs that are pointed to in the file.
+
+You can also uncomment the removal of errors.temp in the read errors script and see a bit more information
