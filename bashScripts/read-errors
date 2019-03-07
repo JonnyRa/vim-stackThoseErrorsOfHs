@@ -34,6 +34,6 @@ do
       echo "couldn't parse $file"
   fi
 done 
-#first strip out the debug info then remove duplicates and sort so that errors are at the bottom (-r reverses)
-sed s/'\S\+'$// $tempFile | awk '!seen[$0]++' | sort -t: -k4 -r > .errors 
+#first strip out the debug info then remove duplicates and sort so that errors are at the bottom (-r reverses). secondary sort is by line number and then column 
+sed s/'\S\+'$// $tempFile | awk '!seen[$0]++' | sort -t: -k4,4r -k2,3 > .errors 
 rm $tempFile 
