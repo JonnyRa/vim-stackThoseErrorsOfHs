@@ -1,4 +1,4 @@
-> Oh vim!  Stack those errors of hs, put them all in a pile for the world to see and thus your pain will become less!
+> Oh vim!  Stack those errors of hs, put them in a pile for all to see. Thus your pain will become less!
 Anonymous 1702
 
 # vim-stackThoseErrorsOfHs
