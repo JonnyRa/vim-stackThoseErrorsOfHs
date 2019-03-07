@@ -29,7 +29,7 @@ do
 
       #grep sometimes thinks the files are binary when they aren't, -a corrects this
       #add in the file this has come from to aid with debugging
-      grep -a 'error:\|warning:' $file | awk '{print $0 " '$file'"}' | sed "s@^@$packagePath/@" >>$tempFile
+      grep -a 'error:\|warning:' $file | awk '{print $0 " '$file'"}' | sed '/no location info/d' | sed "s@^@$packagePath/@" >>$tempFile
   else
       echo "couldn't parse $file"
   fi
