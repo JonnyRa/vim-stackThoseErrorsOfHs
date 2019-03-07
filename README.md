@@ -32,28 +32,6 @@ sudo apt install inotify-tools
 ```
 That's it!
 
-### ansifilter
-Stack logs get nice colours put into them to make easier to read.  This is achieved
-by putting ansi colour codes into the text.  This is great when you're viewing them
-in the terminal but when you want to view the raw text you'll see loads of garbage escape sequences.
-
-To remove these from the output you see in vim you need to install ansifilter...
-
-Here's how:
-
-this is going to pull some source so make run it in a directory where you don't mind adding some files.
-The repos have actually moved over onto gitlab now but for simplicity I'm going to refer to the stale ones on github.
-
-This assumes you have git installed.
-
-```
-git pull https://github.com/andre-simon/ansifilter
-cd ansifilter
-sudo make install
-```
-
-You can verify this has worked by running `which ansifilter`.  This should now be available on your commandline
-
 ## Installing some bash
 This assumes that you have a ~/.local/bin folder that is on your path.  As long as the read-errors script ends up on your path it doesn't matter where it goes.
 
@@ -125,3 +103,6 @@ If you use tmux you can just add setup-watches to your startup script (in the ap
 
 # debugging
 If anything doesn't work please raise issues on here!  Debugging the output mostly involves looking at the `.errors` and `logschanged` files and then poking around in the logs that are pointed to in the file.
+
+# ansifilter
+The tool no longer depends on ansifilter as I realised you can filter out the '-color' logs
