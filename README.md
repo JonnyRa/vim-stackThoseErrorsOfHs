@@ -49,9 +49,10 @@ The second line there sets up the plugin's default bindings (see below)
 this will make a link to `read-errors` in `~/.local/bin`
 
 ## sourcing some bash
-aside from all of the above you also need to source `watchStuff.sh` this adds a couple of bash functions
-one called `setup-watches` which watches logs in .stack-work folders in the current directory and another called
-clear-logschanged which truncates the file.  This is useful as using rm will break the watch mechanism and you'll have to start it again.
+aside from all of the above you also need to source `watchStuff.sh`.  This adds a couple of bash functions:
+
+* `setup-watches` which watches logs in .stack-work folders in the current directory and another called
+* `clear-logschanged` which truncates the file.  This is useful as using `rm logschanged` will break the watch mechanism and you'll have to start it again.
 
 you should add a line like this to your .profile/.bashrc/whatever you use:
 
