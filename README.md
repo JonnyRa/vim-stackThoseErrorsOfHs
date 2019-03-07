@@ -33,7 +33,7 @@ sudo apt install inotify-tools
 That's it!
 
 ## Installing some bash
-This assumes that you have a ~/.local/bin folder that is on your path.  As long as the read-errors script ends up on your path it doesn't matter where it goes.
+This assumes that you have a `~/.local/bin` folder that is on your path.  As long as the read-errors script ends up on your path it doesn't matter where it goes.
 
 if you use vim plug you can get the `read-errors` script installed automatically by adding the following to your .vimrc:
 
