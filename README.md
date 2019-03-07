@@ -96,7 +96,7 @@ Looking at help for any of those will drop you in the right place to see the res
 
 # configuration
 In order for the plugin to work you'll need to run the bash function `setup-watches` in the working directory for your project.  Generally this will be the repository root/wherever you run stack from.
-The different parts of the plugin just communicate through the file system so you can have multiple different vim's/projects open and things should _just work_, however all the scripts just operate locally so you'll need to set your `:pwd` appropriately using `:cd` or `:lcd` accordingly.
+The different parts of the plugin just communicate through the file system so you can have multiple different vim's/projects open and things should _just work_, however all the scripts just operate locally so you'll need to set your `:pwd` appropriately using `:cd` or `:lcd`.
 
 setup watches expects all your stack work directories to have names beginning `.stack-work`, if they don't fit this pattern it won't watch them.  If you don't specify `--work-dir` in your builds then you'll be fine - the default is `.stack-work`
 
