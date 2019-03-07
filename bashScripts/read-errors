@@ -16,7 +16,8 @@ rm -f $tempFile
 #'.*/(.+)-[0-9.]+.log' 
 #regex for getting package name
 extractPackageName='.*/(.+)-[0-9.]+(-test)?\.log'
-awk '!seen[$0]++' logschanged | while read file 
+#remove duplicates and colour logs (this avoids having copies with garbled characters in)
+awk '!seen[$0]++' logschanged | grep -v '\-color$' | while read file 
 do
   if [[ $file =~ $extractPackageName ]]; then
       #fullmatch=${BASH_REMATCH[0]}
@@ -33,5 +34,5 @@ do
   fi
 done 
 #remove duplicates (if come from multiple files) and sort so that errors are at the bottom (-r reverses)
-awk '!seen[$0]++' $tempFile | sort -t: -k4 -r | ansifilter > .errors 
+awk '!seen[$0]++' $tempFile | sort -t: -k4 -r > .errors 
 rm $tempFile 
