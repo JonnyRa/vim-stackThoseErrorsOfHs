@@ -35,5 +35,5 @@ do
   fi
 done 
 #first strip out the debug info then remove duplicates and sort so that errors are at the bottom (-r reverses). secondary sort is by line number and then column 
-sed s/'\S\+'$// $tempFile | awk '!seen[$0]++' | sort -t: -k4,4r -k2,3 > .errors 
+sed s/'\S\+'$// $tempFile | awk '!seen[$0]++' | sort -t: -k4,4r -k1,1 -k2,3n > .errors 
 rm $tempFile 
