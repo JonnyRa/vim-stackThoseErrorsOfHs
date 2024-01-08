@@ -16,7 +16,9 @@ data Parser =
   | GatheringErrorMessage [String]
 
 data ErrorInformation = ErrorInformation {
-
+  _errorLocation :: String
+, _errorType :: [String]
+, _errorMessage :: String
 }
 
 convertStackOutput :: String -> String
@@ -41,7 +43,11 @@ changeToParser parser state = state {_currentParser = parser}
 
 makeInformation :: [String] -> [String] -> ErrorInformation
 makeInformation errorLine firstErrorMessageLine =
-  ErrorInformation
+  ErrorInformation {
+    _errorLocation = head adjustedError
+  , _errorType = drop 1 adjustedError
+  , _errorMessage = unwords adjustedMessage
+  }
 
   where
   adjustedError, adjustedMessage :: [String]
