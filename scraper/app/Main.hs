@@ -10,8 +10,10 @@ import Data.Text.IO (readFile, writeFile)
 main :: IO ()
 main = do
   args <- getArgs
+  progName <- getProgName
   when (length args /= 2) $ do
-    putStrLn "Error needs to 2 arguments: inputFile outputFile"
+    putStrLn "Error needs 2 arguments: "
+    putStrLn $ progName <> " inputFile outputFile"
     exitFailure
 
   let inputFile = head args
