@@ -1,13 +1,16 @@
 {-# Language RecordWildCards #-}
+{-# Language OverloadedStrings #-}
 
 module Parser 
 ( convertStackOutput
 )
 where
 
-import Data.List
+import Prelude hiding (unlines, unwords, words, lines)
 import Data.List.Extra ((!?))
 import Data.Tuple.Extra
+import Data.Text (Text, unlines, unwords, words, lines)
+import qualified Data.Text as Text
 
 data ParseState = ParseState {
   _currentParser :: Parser
@@ -16,24 +19,24 @@ data ParseState = ParseState {
 
 data Parser = 
     WaitingForError
-  | GatheringErrorMessage [String]
+  | GatheringErrorMessage [Text]
 
 data ErrorInformation = ErrorInformation {
-  _errorLocation :: String
-, _errorType :: String
-, _errorMessage :: String
+  _errorLocation :: Text
+, _errorType :: Text
+, _errorMessage :: Text
 }
 
-convertStackOutput :: String -> String
+convertStackOutput :: Text -> Text
 convertStackOutput allInput = convertToOutput $ _errorsInReverseOrder $ foldr processLine (ParseState WaitingForError []) $ lines allInput
   where
-  convertToOutput :: [ErrorInformation] -> String
+  convertToOutput :: [ErrorInformation] -> Text
   convertToOutput = unlines . map outputForVim
 
-  processLine :: String -> ParseState -> ParseState
+  processLine :: Text -> ParseState -> ParseState
   processLine line currentState = parseLine $ _currentParser currentState
     where
-    lineContent :: [String]
+    lineContent :: [Text]
     lineContent = words line
     parseLine :: Parser -> ParseState
     parseLine WaitingForError =
@@ -47,7 +50,7 @@ convertStackOutput allInput = convertToOutput $ _errorsInReverseOrder $ foldr pr
 changeToParser :: Parser -> ParseState -> ParseState
 changeToParser parser state = state {_currentParser = parser}
 
-makeInformation :: [String] -> [String] -> ErrorInformation
+makeInformation :: [Text] -> [Text] -> ErrorInformation
 makeInformation errorLine firstErrorMessageLine =
   ErrorInformation {
     _errorLocation = head adjustedError
@@ -56,16 +59,16 @@ makeInformation errorLine firstErrorMessageLine =
   }
 
   where
-  adjustedError, adjustedMessage :: [String]
+  adjustedError, adjustedMessage :: [Text]
   (adjustedError, adjustedMessage) = 
     adjustment (errorLine, firstErrorMessageLine)
     where
-    adjustment :: ([String], [String]) -> ([String], [String])
+    adjustment :: ([Text], [Text]) -> ([Text], [Text])
     adjustment = 
       if errorLine !? 1 == Just ">"
       then both (drop 2) 
       else id
         
-outputForVim :: ErrorInformation -> String
+outputForVim :: ErrorInformation -> Text
 outputForVim ErrorInformation{..} = 
-  intercalate ":" [_errorLocation, _errorType, _errorMessage]
+  Text.intercalate ":" [_errorLocation, _errorType, _errorMessage]

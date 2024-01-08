@@ -1,9 +1,11 @@
 module Main (main) where
 
+import Prelude hiding (readFile, writeFile)
 import Parser
 import System.Environment
 import System.Exit
 import Control.Monad
+import Data.Text.IO (readFile, writeFile)
 
 main :: IO ()
 main = do
