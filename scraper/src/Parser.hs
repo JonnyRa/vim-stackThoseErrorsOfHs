@@ -3,5 +3,10 @@ module Parser
 )
 where
 
+data ParseState = ParseState
+
 convertStackOutput :: String -> String
-convertStackOutput = id
+convertStackOutput allInput = undefined $ foldr processLine ParseState $ lines allInput
+  where
+  processLine :: String -> ParseState -> ParseState
+  processLine line = id
