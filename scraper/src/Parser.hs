@@ -3,10 +3,25 @@ module Parser
 )
 where
 
-data ParseState = ParseState
+data ParseState = ParseState {
+  _currentParser :: Parser
+}
+
+data Parser = 
+    WaitingForError
+  | GatheringErrorMessage
+
 
 convertStackOutput :: String -> String
-convertStackOutput allInput = undefined $ foldr processLine ParseState $ lines allInput
+convertStackOutput allInput = undefined $ foldr processLine (ParseState WaitingForError) $ lines allInput
   where
   processLine :: String -> ParseState -> ParseState
-  processLine line = id
+  processLine line = parseLine . _currentParser
+    where
+    lineContent :: [String]
+    lineContent = words line
+    parseLine :: Parser -> ParseState
+    parseLine WaitingForError =
+      if any (`elem` ["error:", "warning:"]) lineContent
+      then ParseState GatheringErrorMessage
+      else ParseState WaitingForError
