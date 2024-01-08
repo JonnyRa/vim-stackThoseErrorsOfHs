@@ -1,8 +1,11 @@
+{-# Language RecordWildCards #-}
+
 module Parser 
 ( convertStackOutput
 )
 where
 
+import Data.List
 import Data.List.Extra ((!?))
 import Data.Tuple.Extra
 
@@ -17,13 +20,16 @@ data Parser =
 
 data ErrorInformation = ErrorInformation {
   _errorLocation :: String
-, _errorType :: [String]
+, _errorType :: String
 , _errorMessage :: String
 }
 
 convertStackOutput :: String -> String
-convertStackOutput allInput = undefined $ foldr processLine (ParseState WaitingForError []) $ lines allInput
+convertStackOutput allInput = convertToOutput $ _errorsInReverseOrder $ foldr processLine (ParseState WaitingForError []) $ lines allInput
   where
+  convertToOutput :: [ErrorInformation] -> String
+  convertToOutput = unlines . map outputForVim
+
   processLine :: String -> ParseState -> ParseState
   processLine line currentState = parseLine $ _currentParser currentState
     where
@@ -45,7 +51,7 @@ makeInformation :: [String] -> [String] -> ErrorInformation
 makeInformation errorLine firstErrorMessageLine =
   ErrorInformation {
     _errorLocation = head adjustedError
-  , _errorType = drop 1 adjustedError
+  , _errorType = unwords $ drop 1 adjustedError
   , _errorMessage = unwords adjustedMessage
   }
 
@@ -60,3 +66,6 @@ makeInformation errorLine firstErrorMessageLine =
       then both (drop 2) 
       else id
         
+outputForVim :: ErrorInformation -> String
+outputForVim ErrorInformation{..} = 
+  intercalate ":" [_errorLocation, _errorType, _errorMessage]
