@@ -1,1 +1,5 @@
 *.sw[a-z]
+.stack-work
+scraper/scraper.cabal
+*.yaml.lock
+tags
