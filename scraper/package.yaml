@@ -17,6 +17,8 @@ ghc-options:
 
 library:
   source-dirs: src
+  dependencies:
+    - extra
 
 executables:
   scraper-exe:
