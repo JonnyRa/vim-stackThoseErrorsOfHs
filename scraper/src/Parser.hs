@@ -9,8 +9,7 @@ data ParseState = ParseState {
 
 data Parser = 
     WaitingForError
-  | GatheringErrorMessage
-
+  | GatheringErrorMessage [String]
 
 convertStackOutput :: String -> String
 convertStackOutput allInput = undefined $ foldr processLine (ParseState WaitingForError) $ lines allInput
@@ -23,5 +22,5 @@ convertStackOutput allInput = undefined $ foldr processLine (ParseState WaitingF
     parseLine :: Parser -> ParseState
     parseLine WaitingForError =
       if any (`elem` ["error:", "warning:"]) lineContent
-      then ParseState GatheringErrorMessage
+      then ParseState $ GatheringErrorMessage lineContent
       else ParseState WaitingForError
