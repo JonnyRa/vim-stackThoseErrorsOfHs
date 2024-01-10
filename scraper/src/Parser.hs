@@ -12,6 +12,7 @@ import Data.Tuple.Extra
 import Data.Text (Text, unlines, unwords, words, lines)
 import qualified Data.Text as Text
 import Data.Maybe
+import Data.Foldable
 
 data ParseState = ParseState {
   _currentParser :: Parser
@@ -30,7 +31,7 @@ data ErrorInformation = ErrorInformation {
 } deriving Show
 
 convertStackOutput :: Text -> Text
-convertStackOutput allInput = convertToOutput $ _errors $ foldr processLine (ParseState WaitingForError []) $ lines allInput
+convertStackOutput allInput = convertToOutput $ _errors $ foldl' (flip processLine) (ParseState WaitingForError []) $ lines allInput
   where
   convertToOutput :: [ErrorInformation] -> Text
   convertToOutput = unlines . map outputForVim
