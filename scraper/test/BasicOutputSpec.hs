@@ -11,7 +11,11 @@ import Parser
 import Data.Text (Text, intercalate, unlines, lines)
 
 spec :: Spec
-spec = describe "basic output with one error gets parsed" $
+spec = do 
+  basicTest
+
+basicTest :: Spec
+basicTest = describe "basic output with one error gets parsed" $
   it "produces 1 output line" $
     lines (convertStackOutput basicError) `shouldBe` [
         "/path/project/src/Incremental/Workspaces.hs:470:37:error:Variable not in scope:"
