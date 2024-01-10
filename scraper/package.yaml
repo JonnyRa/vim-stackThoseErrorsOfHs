@@ -47,3 +47,4 @@ tests:
     - scraper
     - hspec
     - text
+    - raw-strings-qq
