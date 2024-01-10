@@ -11,6 +11,7 @@ import Data.List.Extra ((!?))
 import Data.Tuple.Extra
 import Data.Text (Text, unlines, unwords, words, lines)
 import qualified Data.Text as Text
+import Data.Maybe
 
 data ParseState = ParseState {
   _currentParser :: Parser
@@ -40,7 +41,7 @@ convertStackOutput allInput = convertToOutput $ _errors $ foldr processLine (Par
     lineContent = words line
     parseLine :: Parser -> ParseState
     parseLine WaitingForError =
-      if any (`elem` ["error:", "warning:"]) lineContent
+      if any (`elem` ["error:", "warning:"]) lineContent && (fmap fst . Text.uncons =<< listToMaybe lineContent) == Just '/'
       then changeToParser (GatheringErrorMessage lineContent) currentState
       else changeToParser WaitingForError currentState
 
