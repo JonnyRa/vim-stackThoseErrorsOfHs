@@ -1,15 +1,25 @@
+{-# Language OverloadedStrings #-}
+
 module BasicOutputSpec
 ( spec
 )
 where
 
+import Prelude hiding (unlines, lines)
 import Test.Hspec
+import Parser
+import Data.Text (Text, intercalate, unlines, lines)
 
 spec :: Spec
-spec = undefined
+spec = describe "basic output with one error gets parsed" $
+  it "produces 1 output line" $
+    lines (convertStackOutput basicError) `shouldBe` [
+        "/path/project/src/Incremental/Workspaces.hs:470:37:error:Variable not in scope:"
+      ]
 
+basicError :: Text
 basicError = 
-  [ "project> build (lib)"
+  intercalate "\n" [ "project> build (lib)"
   , "Generating ResourceTRACS files..."
   , "Done!"
   , "Preprocessing library for project-0.0.0.."
