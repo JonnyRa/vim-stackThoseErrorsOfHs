@@ -19,9 +19,10 @@ In order for the plugin to work you need to modify the way you run stack to dump
 
 ## dependencies
 This tool depends on ansifilter which you can install using `sudo apt-get install ansifilter` on ubuntu
+It also depends on stack to build the parser... although there's not much point installing the tool if you don't already have that!
 
-## Installing some bash
-This assumes that you have a `~/.local/bin` folder that is on your path.  As long as the read-errors script ends up on your path it doesn't matter where it goes.
+## Installing some bash & the haskell parser
+This assumes that you have a `~/.local/bin` folder that is on your path.  As long as the read-errors script & parser ends up on your path it doesn't matter where it goes.
 
 if you use vim plug you can get the `read-errors` script installed automatically by adding the following to your .vimrc:
 
@@ -35,6 +36,7 @@ You then need to save and trigger installation using `:PlugInstall`
 The second line there sets up the plugin's default bindings (see below)
 
 this will make a link to `read-errors` in `~/.local/bin`
+it will also run `stack install scraper` which makes the executable `stack-error-scraper`
 
 # mappings/usage
 

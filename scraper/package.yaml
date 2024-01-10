@@ -22,7 +22,7 @@ library:
     - text
 
 executables:
-  scraper-exe:
+  stack-error-scraper:
     main:                Main.hs
     source-dirs:         app
     ghc-options:

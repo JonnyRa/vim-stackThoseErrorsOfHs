@@ -10,6 +10,6 @@ rm -f $tempFile
 
 # remove colour from the logs
 ansifilter -i errorLog -o .errors-temp
-stack exec scraper -- .errors-temp .errors
+stack-error-scraper .errors-temp .errors
 
 rm $tempFile 
