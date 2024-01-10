@@ -74,4 +74,4 @@ makeInformation errorLine firstErrorMessageLine =
         
 outputForVim :: ErrorInformation -> Text
 outputForVim ErrorInformation{..} = 
-  Text.intercalate ":" [_errorLocation, _errorType, _errorMessage]
+  Text.intercalate "" [_errorLocation, _errorType, _errorMessage]
