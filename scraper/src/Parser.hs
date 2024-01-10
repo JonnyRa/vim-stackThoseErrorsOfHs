@@ -14,7 +14,7 @@ import qualified Data.Text as Text
 
 data ParseState = ParseState {
   _currentParser :: Parser
-, _errorsInReverseOrder :: [ErrorInformation]
+, _errors :: [ErrorInformation]
 }
 
 data Parser = 
@@ -28,7 +28,7 @@ data ErrorInformation = ErrorInformation {
 }
 
 convertStackOutput :: Text -> Text
-convertStackOutput allInput = convertToOutput $ _errorsInReverseOrder $ foldr processLine (ParseState WaitingForError []) $ lines allInput
+convertStackOutput allInput = convertToOutput $ _errors $ foldr processLine (ParseState WaitingForError []) $ lines allInput
   where
   convertToOutput :: [ErrorInformation] -> Text
   convertToOutput = unlines . map outputForVim
@@ -45,7 +45,7 @@ convertStackOutput allInput = convertToOutput $ _errorsInReverseOrder $ foldr pr
       else changeToParser WaitingForError currentState
 
     parseLine (GatheringErrorMessage errorLine) =
-      ParseState WaitingForError $ makeInformation errorLine lineContent: _errorsInReverseOrder currentState
+      ParseState WaitingForError $ makeInformation errorLine lineContent: _errors currentState
 
 changeToParser :: Parser -> ParseState -> ParseState
 changeToParser parser state = state {_currentParser = parser}
