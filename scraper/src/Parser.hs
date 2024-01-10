@@ -21,12 +21,13 @@ data ParseState = ParseState {
 data Parser = 
     WaitingForError
   | GatheringErrorMessage [Text]
+  deriving Show
 
 data ErrorInformation = ErrorInformation {
   _errorLocation :: Text
 , _errorType :: Text
 , _errorMessage :: Text
-}
+} deriving Show
 
 convertStackOutput :: Text -> Text
 convertStackOutput allInput = convertToOutput $ _errors $ foldr processLine (ParseState WaitingForError []) $ lines allInput
