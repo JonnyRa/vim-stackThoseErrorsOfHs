@@ -13,10 +13,12 @@ import Data.Text (Text, unlines, unwords, words, lines)
 import qualified Data.Text as Text
 import Data.Maybe
 import Data.Foldable
+import Data.DList (DList)
+import qualified Data.DList as DList
 
 data ParseState = ParseState {
   _currentParser :: Parser
-, _errors :: [ErrorInformation]
+, _errors :: DList ErrorInformation
 }
 
 data Parser = 
@@ -31,7 +33,7 @@ data ErrorInformation = ErrorInformation {
 } deriving Show
 
 convertStackOutput :: Text -> Text
-convertStackOutput allInput = convertToOutput $ _errors $ foldl' (flip processLine) (ParseState WaitingForError []) $ lines allInput
+convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip processLine) (ParseState WaitingForError DList.empty) $ lines allInput
   where
   convertToOutput :: [ErrorInformation] -> Text
   convertToOutput = unlines . map outputForVim
@@ -48,7 +50,7 @@ convertStackOutput allInput = convertToOutput $ _errors $ foldl' (flip processLi
       else changeToParser WaitingForError currentState
 
     parseLine (GatheringErrorMessage errorLine) =
-      ParseState WaitingForError $ makeInformation errorLine lineContent: _errors currentState
+      ParseState WaitingForError $ _errors currentState `DList.snoc` makeInformation errorLine lineContent
 
 changeToParser :: Parser -> ParseState -> ParseState
 changeToParser parser state = state {_currentParser = parser}
