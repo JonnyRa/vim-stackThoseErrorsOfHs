@@ -53,7 +53,7 @@ Error: [S-7282]
        
        [S-7011]
        While building package project-0.0.0 (scroll up to its section to see the error) using:
-       /path/project/.stack-work/dist/x86_64-linux-tinfo6/Cabal-3.8.1.0/setup/setup --verbose=1 --builddir=.stack-work/dist/x86_64-linux-tinfo6/Cabal-3.8.1.0 build lib:project --ghc-options \" -fdiagnostics-color=always\"
+       /path/project/.stack-work/dist/x86_64-linux-tinfo6/Cabal-3.8.1.0/setup/setup --verbose=1 --builddir=.stack-work/dist/x86_64-linux-tinfo6/Cabal-3.8.1.0 build lib:project --ghc-options " -fdiagnostics-color=always"
        Process exited with code: ExitFailure 1 
 Type help for the available commands. Press enter to force a rebuild.|]
 
