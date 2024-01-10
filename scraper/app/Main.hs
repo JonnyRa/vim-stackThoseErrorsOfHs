@@ -5,7 +5,7 @@ import Parser
 import System.Environment
 import System.Exit
 import Control.Monad
-import Data.Text.IO (readFile, writeFile)
+import Data.Text.IO.Utf8 (readFile, writeFile)
 
 main :: IO ()
 main = do

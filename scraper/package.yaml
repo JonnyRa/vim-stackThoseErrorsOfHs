@@ -32,6 +32,7 @@ executables:
     dependencies:
     - scraper
     - text
+    - with-utf8
 
 tests:
   scraper-test:
