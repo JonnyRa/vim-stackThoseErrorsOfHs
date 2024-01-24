@@ -45,6 +45,8 @@ convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip 
     rawWords = words line
     lineContent :: [Text]
     lineContent = 
+      --this is to deal with the input where we get
+      --`package-name       > ` prefixed on the start of lines
       if rawWords !? 1 == Just ">"
       then drop 2 rawWords
       else rawWords
