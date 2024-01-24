@@ -52,9 +52,12 @@ convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip 
       else rawWords
     parseLine :: Parser -> ParseState
     parseLine WaitingForError =
-      if any (`elem` ["error:", "warning:"]) lineContent && (fmap fst . Text.uncons =<< listToMaybe lineContent) == Just '/'
+      if any (`elem` ["error:", "warning:"]) lineContent && (firstLetter =<< listToMaybe lineContent) == Just '/'
       then changeToParser (GatheringErrorMessage lineContent) currentState
       else changeToParser WaitingForError currentState
+      where
+      firstLetter :: Text -> Maybe Char
+      firstLetter = fmap fst . Text.uncons
 
     parseLine (GatheringErrorMessage errorLine) =
       ParseState WaitingForError $ _errors currentState `DList.snoc` makeInformation errorLine lineContent
