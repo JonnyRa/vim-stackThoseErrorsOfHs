@@ -16,6 +16,7 @@ spec :: Spec
 spec = do 
   basicTest
   twoErrorsTest
+  projectPrefixedTest
 
 basicTest :: Spec
 basicTest = describe "basic output with one error gets parsed" $
@@ -111,6 +112,41 @@ twoErrorsTest = describe "multiple errors" $
     expectOutput twoErrors [
         "/path/project/src/Incremental/Workspaces.hs:470:37:error:Variable not in scope:"
       , "/path/project/src/Incremental/Workspaces.hs:536:14:error:Variable not in scope:"
+      ]
+
+projectPrefixedErrors :: Text
+projectPrefixedErrors = [r|
+trent-testing         > configure (lib + exe)
+trent-testing         > Configuring trent-testing-0.1.0.0...
+trent-testing         > build (lib + exe)
+trent-testing         > Preprocessing library for trent-testing-0.1.0.0..
+trent-testing         > Building library for trent-testing-0.1.0.0..
+trent-testing         > [16 of 71] Compiling Test.ModelHelper
+trent-testing         > 
+trent-testing         > /path/src/Test/ModelHelper.hs:121:3: error:
+trent-testing         >     Illegal use of punning for field ‘modelSettingsOldValidation’
+trent-testing         >     Suggested fix: Perhaps you intended to use NamedFieldPuns
+trent-testing         >     |
+trent-testing         > 121 |   ModelSettings
+trent-testing         >     |   ^^^^^^^^^^^^^...
+
+Error: [S-7282]
+       Stack failed to execute the build plan.
+       
+       While executing the build plan, Stack encountered the error:
+       
+       [S-7011]
+       While building package trent-testing-0.1.0.0 (scroll up to its section to see the error)
+       using:
+       /home/jonathanramsden/.stack/setup-exe-cache/x86_64-linux-tinfo6/Cabal-simple_6HauvNHV_3.8.1.0_ghc-9.4.7 --verbose=1 --builddir=.stack-work/dist/x86_64-linux-tinfo6/Cabal-3.8.1.0 build lib:trent-testing exe:read-events exe:write-events --ghc-options " -fdiagnostics-color=always"
+       Process exited with code: ExitFailure 1 
+Type help for the available commands. Press enter to force a rebuild.|]
+
+projectPrefixedTest :: Spec
+projectPrefixedTest = describe "basic interleaved output" $
+  it "can process well ordered errors with module prefixes" $
+    expectOutput projectPrefixedErrors [
+        "/path/src/Test/ModelHelper.hs:121:3:error:Illegal use of punning for field ‘modelSettingsOldValidation’"
       ]
 
 expectOutput :: Text -> [Text] -> Expectation
