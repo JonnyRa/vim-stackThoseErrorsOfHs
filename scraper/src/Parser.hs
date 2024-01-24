@@ -41,8 +41,13 @@ convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip 
   processLine :: Text -> ParseState -> ParseState
   processLine line currentState = parseLine $ _currentParser currentState
     where
+    rawWords :: [Text]
+    rawWords = words line
     lineContent :: [Text]
-    lineContent = words line
+    lineContent = 
+      if rawWords !? 1 == Just ">"
+      then drop 2 rawWords
+      else rawWords
     parseLine :: Parser -> ParseState
     parseLine WaitingForError =
       if any (`elem` ["error:", "warning:"]) lineContent && (fmap fst . Text.uncons =<< listToMaybe lineContent) == Just '/'
