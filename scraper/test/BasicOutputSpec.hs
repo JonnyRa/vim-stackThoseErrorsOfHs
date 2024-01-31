@@ -17,6 +17,7 @@ spec = do
   basicTest
   twoErrorsTest
   projectPrefixedTest
+  projectPrefixedNoSpaceTest
 
 basicTest :: Spec
 basicTest = describe "basic output with one error gets parsed" $
@@ -138,7 +139,7 @@ Error: [S-7282]
        [S-7011]
        While building package trent-testing-0.1.0.0 (scroll up to its section to see the error)
        using:
-       /home/jonathanramsden/.stack/setup-exe-cache/x86_64-linux-tinfo6/Cabal-simple_6HauvNHV_3.8.1.0_ghc-9.4.7 --verbose=1 --builddir=.stack-work/dist/x86_64-linux-tinfo6/Cabal-3.8.1.0 build lib:trent-testing exe:read-events exe:write-events --ghc-options " -fdiagnostics-color=always"
+       /path/.stack/setup-exe-cache/x86_64-linux-tinfo6/Cabal-simple_6HauvNHV_3.8.1.0_ghc-9.4.7 --verbose=1 --builddir=.stack-work/dist/x86_64-linux-tinfo6/Cabal-3.8.1.0 build lib:trent-testing exe:read-events exe:write-events --ghc-options " -fdiagnostics-color=always"
        Process exited with code: ExitFailure 1 
 Type help for the available commands. Press enter to force a rebuild.|]
 
@@ -147,6 +148,31 @@ projectPrefixedTest = describe "basic interleaved output" $
   it "can process well ordered errors with module prefixes" $
     expectOutput projectPrefixedErrors [
         "/path/src/Test/ModelHelper.hs:121:3:error:Illegal use of punning for field ‘modelSettingsOldValidation’"
+      ]
+
+projectPrefixedNoSpaceErrors :: Text
+projectPrefixedNoSpaceErrors = [r|
+a-longer-path> [432 of 810] Compiling TestUtils.ControlModelTracking [TestUtils package changed]
+a-longer-path> [504 of 810] Compiling SeleniumTests.CrewDiagramming.DiagramEditor.Skills [Source file changed]
+a-longer-path> /path/project/selenium/SeleniumTests/CrewDiagramming/DiagramEditor/Skills.hs:11:51: error:
+a-longer-path>     Module
+a-longer-path>     ‘Test.Planning.Units.TestCode’
+a-longer-path>     does not export
+a-longer-path>     ‘execPlanningFromArgs’
+a-longer-path>    |
+a-longer-path> 11 | import Test.Planning.Units.TestCode             ( execPlanningFromArgs, setupUnitPlan, applyEvents, releaseAllLTPUnits, setupDates,
+a-longer-path>    |                                                   ^^^^^^^^^^^^^^^^^^^^
+short-path   > Preprocessing library for trent-database-tests-0.1.0.0..
+short-path   > Building library for trent-database-tests-0.1.0.0..
+short-path   > copy/register
+
+Type help for the available commands. Press enter to force a rebuild.|]
+
+projectPrefixedNoSpaceTest :: Spec
+projectPrefixedNoSpaceTest = describe "basic interleaved output with no space after project name" $
+  it "can process well errors for module prefixes that have no space before `>`" $
+    expectOutput projectPrefixedNoSpaceErrors [
+        "/path/project/selenium/SeleniumTests/CrewDiagramming/DiagramEditor/Skills.hs:11:51:error:Module"
       ]
 
 expectOutput :: Text -> [Text] -> Expectation
