@@ -41,15 +41,15 @@ convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip 
   processLine :: Text -> ParseState -> ParseState
   processLine line currentState = parseLine $ _currentParser currentState
     where
-    rawWords :: [Text]
-    rawWords = words line
     lineContent :: [Text]
     lineContent = 
       --this is to deal with the input where we get
       --`package-name       > ` prefixed on the start of lines
-      if rawWords !? 1 == Just ">"
-      then drop 2 rawWords
-      else rawWords
+      --technically this might remove `>` characters from the rest of the line but don't think we care about this
+      words $ case Text.splitOn ">" line of
+        [noSplit] -> noSplit
+        bits -> unwords $ drop 1 bits
+      
     parseLine :: Parser -> ParseState
     parseLine WaitingForError =
       if any (`elem` ["error:", "warning:"]) lineContent && (firstLetter =<< listToMaybe lineContent) == Just '/'
