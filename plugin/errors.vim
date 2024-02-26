@@ -1,4 +1,4 @@
-command! StackOpenErrors cfile .errors
+command! StackOpenErrors cgetfile .errors
 
 function! StackReadErrors()
   "call the bash script (needs to be on path)
