@@ -4,6 +4,9 @@ function! StackReadErrors()
   "call the bash script (needs to be on path)
   silent !read-errors
   redraw!
+  "set a mark before we open the errors as this causes a jump which we won't come back to
+  "this modifies the jump list
+  normal m'
   silent StackOpenErrors
   clast
 endfunction
