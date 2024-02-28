@@ -58,7 +58,7 @@ convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip 
       (preMatch,_,postMatch) = line =~ regex :: (Text, Text, Text)
         where
         regex :: Text
-        regex = [r|^[-\w]+ *>|]
+        regex = [r|^[-[:word:]]+ *>|]
       
     parseLine :: Parser -> ParseState
     parseLine WaitingForError =
