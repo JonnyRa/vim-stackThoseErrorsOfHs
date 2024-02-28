@@ -18,6 +18,7 @@ spec = do
   twoErrorsTest
   projectPrefixedTest
   projectPrefixedNoSpaceTest
+  typeSignatureInErrorMessageNotInterleavedTest
 
 basicTest :: Spec
 basicTest = describe "basic output with one error gets parsed" $
@@ -173,6 +174,35 @@ projectPrefixedNoSpaceTest = describe "basic interleaved output with no space af
   it "can process well errors for module prefixes that have no space before `>`" $
     expectOutput projectPrefixedNoSpaceErrors [
         "/path/project/selenium/SeleniumTests/CrewDiagramming/DiagramEditor/Skills.hs:11:51:error:Module"
+      ]
+
+typeSignatureInErrorMessageNotInterleaved :: Text
+typeSignatureInErrorMessageNotInterleaved = [r|
+/path/src/Handler/Tim/Api.hs:136:1: error:
+    • Couldn't match type ‘Maybe Text -> FormationIssues’
+                     with ‘FormationIssues’
+      Expected: Servant.Server.Internal.ServerT
+                  TrainFormationIssuesAPI ServantApiReader
+        Actual: Date
+                -> Maybe TrainExceptionMap
+                -> ReaderT
+                     ApiConfig
+                     Servant.Server.Internal.Handler.Handler
+                     (Maybe Text -> FormationIssues)
+    • The equation for ‘getTrainFormationIssuesApi’ has three value arguments,
+        but its type ‘ServantApiEnv
+                      -> Servant.Server.Internal.ServerT
+                           TrainFormationIssuesAPI ServantApiReader’
+        has only one
+    |
+136 | getTrainFormationIssuesApi _env day mText = do
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^|]
+
+typeSignatureInErrorMessageNotInterleavedTest :: Spec
+typeSignatureInErrorMessageNotInterleavedTest = describe "type signature in uninterleaved output" $
+  it "the error message isn't truncated because of the `>` in the type signature" $
+    expectOutput typeSignatureInErrorMessageNotInterleaved [
+        "/path/src/Handler/Tim/Api.hs:136:1:error:• Couldn't match type ‘Maybe Text -> FormationIssues’"
       ]
 
 expectOutput :: Text -> [Text] -> Expectation
