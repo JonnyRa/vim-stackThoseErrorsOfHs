@@ -10,7 +10,7 @@ import Text.RawString.QQ
 import Prelude hiding (unlines, lines)
 import Test.Hspec
 import Parser
-import Data.Text (Text, intercalate, unlines, lines)
+import Data.Text (Text, lines)
 
 spec :: Spec
 spec = do 

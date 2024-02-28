@@ -1,6 +1,5 @@
 {-# Language RecordWildCards #-}
 {-# Language OverloadedStrings #-}
-{-# LANGUAGE QuasiQuotes #-}
 
 module Parser 
 ( convertStackOutput
@@ -17,7 +16,6 @@ import Data.Foldable
 import Data.DList (DList)
 import qualified Data.DList as DList
 import Text.Regex.TDFA
-import Text.RawString.QQ
 
 data ParseState = ParseState {
   _currentParser :: Parser
