@@ -171,7 +171,7 @@ Type help for the available commands. Press enter to force a rebuild.|]
 
 projectPrefixedNoSpaceTest :: Spec
 projectPrefixedNoSpaceTest = describe "basic interleaved output with no space after project name" $
-  it "can process well errors for module prefixes that have no space before `>`" $
+  it "can process errors for module prefixes that have no space before `>`" $
     expectOutput projectPrefixedNoSpaceErrors [
         "/path/project/selenium/SeleniumTests/CrewDiagramming/DiagramEditor/Skills.hs:11:51:error:Module"
       ]
