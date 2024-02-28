@@ -1,5 +1,6 @@
 {-# Language RecordWildCards #-}
 {-# Language OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
 
 module Parser 
 ( convertStackOutput
@@ -15,6 +16,8 @@ import Data.Maybe
 import Data.Foldable
 import Data.DList (DList)
 import qualified Data.DList as DList
+import Text.Regex.TDFA
+import Text.RawString.QQ
 
 data ParseState = ParseState {
   _currentParser :: Parser
@@ -43,12 +46,19 @@ convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip 
     where
     lineContent :: [Text]
     lineContent = 
-      --this is to deal with the input where we get
-      --`package-name       > ` prefixed on the start of lines
-      --technically this might remove `>` characters from the rest of the line but don't think we care about this
-      words $ case Text.splitOn ">" line of
-        [noSplit] -> noSplit
-        bits -> unwords $ drop 1 bits
+      words $ if Text.length preMatch > 0 
+        then preMatch
+        else postMatch
+      where
+      --regex to look for
+      --`package-name       > ` prefixed on the start of lines.  Might not have any spaces between the package name and >
+      --if this matches then the first match is the second item with pre/post match before/after
+      --if it doesn't then everything ends up in the first bit of the tuple
+      preMatch, postMatch :: Text
+      (preMatch,_,postMatch) = line =~ regex :: (Text, Text, Text)
+        where
+        regex :: Text
+        regex = [r|^[-\w]+ *>|]
       
     parseLine :: Parser -> ParseState
     parseLine WaitingForError =

@@ -21,6 +21,8 @@ library:
     - extra
     - text
     - dlist
+    - regex-tdfa
+    - raw-strings-qq
 
 executables:
   stack-error-scraper:
