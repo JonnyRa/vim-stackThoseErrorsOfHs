@@ -60,9 +60,6 @@ Type help for the available commands. Press enter to force a rebuild.|]
         "/path/project/src/Incremental/Workspaces.hs:470:37:error:Variable not in scope:"
       ]
 
-
-
-
 twoErrorsTest :: Spec
 twoErrorsTest = describe "multiple errors" $ 
   it "errors are output in the right order" $ 
