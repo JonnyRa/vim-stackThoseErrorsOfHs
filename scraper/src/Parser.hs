@@ -70,7 +70,7 @@ convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip 
       else changeToParser WaitingForError currentState
 
     parseLine (GatheringErrorMessage errorLine) =
-      changeToParser WaitingForError $ addError currentState $ makeInformation errorLine lineContent
+      changeToParser WaitingForError $ addError (makeInformation errorLine lineContent) currentState 
 
     firstLetterOfLine :: Maybe Char
     firstLetterOfLine = (firstLetterOf =<< listToMaybe lineContent)
@@ -81,8 +81,8 @@ convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip 
 changeToParser :: Parser -> ParseState -> ParseState
 changeToParser = set currentParser
 
-addError :: ParseState -> ErrorInformation -> ParseState
-addError state newError = over errors (\existingErrors -> existingErrors `DList.snoc` newError) state
+addError :: ErrorInformation -> ParseState -> ParseState
+addError newError = over errors (`DList.snoc` newError)
 
 makeInformation :: [Text] -> [Text] -> ErrorInformation
 makeInformation errorLine firstErrorMessageLine =
