@@ -10,7 +10,6 @@ where
 
 import Prelude hiding (unlines, unwords, words, lines)
 import Data.List.Extra ((!?))
-import Data.Tuple.Extra
 import Data.Text (Text, unlines, unwords, words, lines)
 import qualified Data.Text as Text
 import Data.Maybe
@@ -20,6 +19,7 @@ import qualified Data.DList as DList
 import Text.Regex.TDFA
 import Lens.Micro hiding (both)
 import Lens.Micro.TH
+import Data.Bifunctor
 
 data ParseState = ParseState {
   _currentParser :: Parser
@@ -76,8 +76,8 @@ convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip 
       then changeToParser (GatheringErrorMessage $ GatherState lineContent mempty) currentState
       else changeToParser WaitingForError currentState
 
-    parseLine (GatheringErrorMessage GatherState{..}) =
-      changeToParser WaitingForError $ addError (makeInformation _errorLine lineContent) currentState 
+    parseLine (GatheringErrorMessage gatherState) =
+      changeToParser WaitingForError $ addError (makeInformation $ addErrorLine lineContent gatherState) currentState 
 
     firstLetterOfLine :: Maybe Char
     firstLetterOfLine = (firstLetterOf =<< listToMaybe lineContent)
@@ -97,24 +97,29 @@ addError = addToDList errors
 addToDList :: Lens' container (DList a) -> a -> container -> container
 addToDList setter newThing = over setter (`DList.snoc` newThing)
 
-makeInformation :: [Text] -> [Text] -> ErrorInformation
-makeInformation errorLine firstErrorMessageLine =
+makeInformation :: GatherState -> ErrorInformation
+makeInformation GatherState{..} =
   ErrorInformation {
     _errorLocation = head adjustedError
   , _errorType = unwords $ drop 1 adjustedError
-  , _errorMessage = unwords adjustedMessage
+  , _errorMessage = unlines $ map unwords $ toList adjustedMessage
   }
 
   where
-  adjustedError, adjustedMessage :: [Text]
+  adjustedError :: [Text]
+  adjustedMessage :: DList [Text]
   (adjustedError, adjustedMessage) = 
-    adjustment (errorLine, firstErrorMessageLine)
+    adjustment (_errorLine, _detailedMessage)
     where
-    adjustment :: ([Text], [Text]) -> ([Text], [Text])
+    adjustment :: ([Text], DList [Text]) -> ([Text], DList [Text])
     adjustment = 
-      if errorLine !? 1 == Just ">"
-      then both (drop 2) 
-      else id
+      bimap editOne (fmap editOne)
+      where
+      editOne :: [Text] -> [Text]
+      editOne = 
+        if _errorLine !? 1 == Just ">"
+        then (drop 2) 
+        else id
         
 outputForVim :: ErrorInformation -> Text
 outputForVim ErrorInformation{..} = 
