@@ -77,7 +77,13 @@ convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip 
       else changeToParser WaitingForError currentState
 
     parseLine (GatheringErrorMessage gatherState) =
-      changeToParser WaitingForError $ addError (makeInformation $ addErrorLine lineContent gatherState) currentState 
+      -- relying on error messages being terminated with blocks that look like this:
+      --    |
+      --470 |   getLightDiagram crewDiagId scheme <|> (getDiagramForValidationFromShadow =<< getShadowDiagram crewDiagId scheme)
+      --    |                                     ^^^
+      if firstLetterOfLine == Just '|'
+      then changeToParser WaitingForError $ addError (makeInformation gatherState) currentState 
+      else changeToParser (GatheringErrorMessage $ addErrorLine lineContent gatherState) currentState 
 
     firstLetterOfLine :: Maybe Char
     firstLetterOfLine = firstLetterOf =<< listToMaybe lineContent
