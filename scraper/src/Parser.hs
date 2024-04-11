@@ -68,10 +68,10 @@ convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip 
       ParseState WaitingForError $ _errors currentState `DList.snoc` makeInformation errorLine lineContent
 
     firstLetterOfLine :: Maybe Char
-    firstLetterOfLine = (firstLetter =<< listToMaybe lineContent)
+    firstLetterOfLine = (firstLetterOf =<< listToMaybe lineContent)
       where
-      firstLetter :: Text -> Maybe Char
-      firstLetter = fmap fst . Text.uncons
+      firstLetterOf :: Text -> Maybe Char
+      firstLetterOf = fmap fst . Text.uncons
 
 changeToParser :: Parser -> ParseState -> ParseState
 changeToParser parser state = state {_currentParser = parser}
