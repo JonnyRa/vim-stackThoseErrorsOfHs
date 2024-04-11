@@ -19,6 +19,7 @@ spec = do
   projectPrefixedTest
   projectPrefixedNoSpaceTest
   typeSignatureInErrorMessageNotInterleavedTest
+  extractExtraDetailsTest
 
 basicTest :: Spec
 basicTest = describe "basic output with one error gets parsed" $
@@ -203,6 +204,33 @@ typeSignatureInErrorMessageNotInterleavedTest = describe "type signature in unin
   it "the error message isn't truncated because of the `>` in the type signature" $
     expectOutput typeSignatureInErrorMessageNotInterleaved [
         "/path/src/Handler/Tim/Api.hs:136:1:error:• Couldn't match type ‘Maybe Text -> FormationIssues’"
+      ]
+
+extractExtraDetailsInput :: Text
+extractExtraDetailsInput = [r|
+/path.hs:32:46: warning: [GHC-38856] [-Wunused-imports]
+    The import of ‘makeOvernightTurnaroundDirt’
+    from module ‘Model.Control.MakeVexDirt’ is redundant
+   |
+32 |                                              makeOvernightTurnaroundDirt, makeRestrictionDirt,
+   |                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/path.hs:72:50: error: [GHC-88464]
+    Data constructor not in scope:
+      AllDiry :: DirtyIdSet VehicleDiagramId
+    Suggested fix:
+      Perhaps use ‘AllDirty’ (imported from Types.Cacheing)
+   |
+72 |   makeRouteRestrictionViolationExceptionDirt d s AllDiry
+   |                                                  ^^^^^^^|]
+
+
+extractExtraDetailsTest :: Spec
+extractExtraDetailsTest = describe "long error messages" $
+  it "messages spread over multiple lines are collected and concatenated" $
+    expectOutput extractExtraDetailsInput [
+        "/path.hs:32:46:warning: [GHC-38856] [-Wunused-imports]The import of ‘makeOvernightTurnaroundDirt’ from module ‘Model.Control.MakeVexDirt’ is redundant"
+      , "/path.hs:72:50:error: [GHC-88464]Data constructor not in scope: AllDiry :: DirtyIdSet VehicleDiagramId Suggested fix: Perhaps use ‘AllDirty’ (imported from Types.Cacheing)"
       ]
 
 expectOutput :: Text -> [Text] -> Expectation
