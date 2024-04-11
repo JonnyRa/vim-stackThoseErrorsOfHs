@@ -1,5 +1,6 @@
 {-# Language RecordWildCards #-}
 {-# Language OverloadedStrings #-}
+{-# Language TemplateHaskell #-}
 
 module Parser 
 ( convertStackOutput
@@ -16,6 +17,8 @@ import Data.Foldable
 import Data.DList (DList)
 import qualified Data.DList as DList
 import Text.Regex.TDFA
+import Lens.Micro hiding (both)
+import Lens.Micro.TH
 
 data ParseState = ParseState {
   _currentParser :: Parser
@@ -32,6 +35,8 @@ data ErrorInformation = ErrorInformation {
 , _errorType :: Text
 , _errorMessage :: Text
 } deriving Show
+
+makeLenses ''ParseState
 
 convertStackOutput :: Text -> Text
 convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip processLine) (ParseState WaitingForError DList.empty) $ lines allInput
@@ -74,10 +79,10 @@ convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip 
       firstLetterOf = fmap fst . Text.uncons
 
 changeToParser :: Parser -> ParseState -> ParseState
-changeToParser parser state = state {_currentParser = parser}
+changeToParser = set currentParser
 
 addError :: ParseState -> ErrorInformation -> ParseState
-addError state newError = state { _errors = _errors state `DList.snoc` newError }
+addError state newError = over errors (\existingErrors -> existingErrors `DList.snoc` newError) state
 
 makeInformation :: [Text] -> [Text] -> ErrorInformation
 makeInformation errorLine firstErrorMessageLine =

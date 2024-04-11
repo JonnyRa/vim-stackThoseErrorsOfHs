@@ -23,6 +23,8 @@ library:
     - dlist
     - regex-tdfa
     - raw-strings-qq
+    - microlens
+    - microlens-th
 
 executables:
   stack-error-scraper:
