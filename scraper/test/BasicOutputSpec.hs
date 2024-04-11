@@ -13,17 +13,9 @@ import Parser
 import Data.Text (Text, lines)
 
 spec :: Spec
-spec = do 
-  basicTest
-  twoErrorsTest
-  projectPrefixedTest
-  projectPrefixedNoSpaceTest
-  typeSignatureInErrorMessageNotInterleavedTest
-  extractExtraDetailsTest
+spec = describe "input examples" $ do 
 
-basicTest :: Spec
-basicTest = describe "basic output with one error gets parsed" $
-  it "produces 1 output line" $
+  it "basic output with one error gets parsed produces 1 output line" $
     let input = [r|
 project> build (lib)
 Generating ResourceTRACS files...
@@ -60,9 +52,7 @@ Type help for the available commands. Press enter to force a rebuild.|]
         "/path/project/src/Incremental/Workspaces.hs:470:37:error:Variable not in scope:"
       ]
 
-twoErrorsTest :: Spec
-twoErrorsTest = describe "multiple errors" $ 
-  it "errors are output in the right order" $ 
+  it "multiple errors - errors are output in the right order" $ 
     let input = [r|
 trent-model> build (lib)
 Generating ResourceTRACS files...
@@ -112,9 +102,7 @@ Type help for the available commands. Press enter to force a rebuild.|]
       , "/path/project/src/Incremental/Workspaces.hs:536:14:error:Variable not in scope:"
       ]
 
-projectPrefixedTest :: Spec
-projectPrefixedTest = describe "basic interleaved output" $
-  it "can process well ordered errors with module prefixes" $
+  it "basic interleaved output - can process well ordered errors with module prefixes" $
     let input = [r|
 trent-testing         > configure (lib + exe)
 trent-testing         > Configuring trent-testing-0.1.0.0...
@@ -146,9 +134,7 @@ Type help for the available commands. Press enter to force a rebuild.|]
         "/path/src/Test/ModelHelper.hs:121:3:error:Illegal use of punning for field ‘modelSettingsOldValidation’"
       ]
 
-projectPrefixedNoSpaceTest :: Spec
-projectPrefixedNoSpaceTest = describe "basic interleaved output with no space after project name" $
-  it "can process errors for module prefixes that have no space before `>`" $
+  it "basic interleaved output with no space after project name - can process errors for module prefixes that have no space before `>`" $
     let input = [r|
 a-longer-path> [432 of 810] Compiling TestUtils.ControlModelTracking [TestUtils package changed]
 a-longer-path> [504 of 810] Compiling SeleniumTests.CrewDiagramming.DiagramEditor.Skills [Source file changed]
@@ -170,9 +156,7 @@ Type help for the available commands. Press enter to force a rebuild.|]
         "/path/project/selenium/SeleniumTests/CrewDiagramming/DiagramEditor/Skills.hs:11:51:error:Module"
       ]
 
-typeSignatureInErrorMessageNotInterleavedTest :: Spec
-typeSignatureInErrorMessageNotInterleavedTest = describe "type signature in uninterleaved output" $
-  it "the error message isn't truncated because of the `>` in the type signature" $
+  it "type signature in uninterleaved output - the error message isn't truncated because of the `>` in the type signature" $
     let input = [r|
 /path/src/Handler/Tim/Api.hs:136:1: error:
     • Couldn't match type ‘Maybe Text -> FormationIssues’
@@ -198,9 +182,7 @@ typeSignatureInErrorMessageNotInterleavedTest = describe "type signature in unin
         "/path/src/Handler/Tim/Api.hs:136:1:error:• Couldn't match type ‘Maybe Text -> FormationIssues’"
       ]
 
-extractExtraDetailsTest :: Spec
-extractExtraDetailsTest = describe "long error messages" $
-  it "messages spread over multiple lines are collected and concatenated" $
+  it "long error messages - messages spread over multiple lines are collected and concatenated" $
     let input = [r|
 /path.hs:32:46: warning: [GHC-38856] [-Wunused-imports]
     The import of ‘makeOvernightTurnaroundDirt’
