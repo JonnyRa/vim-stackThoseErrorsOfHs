@@ -80,7 +80,7 @@ convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip 
       changeToParser WaitingForError $ addError (makeInformation $ addErrorLine lineContent gatherState) currentState 
 
     firstLetterOfLine :: Maybe Char
-    firstLetterOfLine = (firstLetterOf =<< listToMaybe lineContent)
+    firstLetterOfLine = firstLetterOf =<< listToMaybe lineContent
       where
       firstLetterOf :: Text -> Maybe Char
       firstLetterOf = fmap fst . Text.uncons
