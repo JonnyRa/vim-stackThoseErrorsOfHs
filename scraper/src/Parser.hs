@@ -27,8 +27,13 @@ data ParseState = ParseState {
 
 data Parser = 
     WaitingForError
-  | GatheringErrorMessage [Text]
+  | GatheringErrorMessage GatherState
   deriving Show
+
+data GatherState = GatherState {
+  _errorLine :: [Text] 
+, _detailedMessage :: DList [Text]
+} deriving Show
 
 data ErrorInformation = ErrorInformation {
   _errorLocation :: Text
@@ -66,11 +71,11 @@ convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip 
     parseLine :: Parser -> ParseState
     parseLine WaitingForError =
       if any (`elem` ["error:", "warning:"]) lineContent && firstLetterOfLine == Just '/'
-      then changeToParser (GatheringErrorMessage lineContent) currentState
+      then changeToParser (GatheringErrorMessage $ GatherState lineContent mempty) currentState
       else changeToParser WaitingForError currentState
 
-    parseLine (GatheringErrorMessage errorLine) =
-      changeToParser WaitingForError $ addError (makeInformation errorLine lineContent) currentState 
+    parseLine (GatheringErrorMessage GatherState{..}) =
+      changeToParser WaitingForError $ addError (makeInformation _errorLine lineContent) currentState 
 
     firstLetterOfLine :: Maybe Char
     firstLetterOfLine = (firstLetterOf =<< listToMaybe lineContent)
