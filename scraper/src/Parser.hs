@@ -1,6 +1,7 @@
 {-# Language RecordWildCards #-}
 {-# Language OverloadedStrings #-}
 {-# Language TemplateHaskell #-}
+{-# Language RankNTypes #-}
 
 module Parser 
 ( convertStackOutput
@@ -42,6 +43,7 @@ data ErrorInformation = ErrorInformation {
 } deriving Show
 
 makeLenses ''ParseState
+makeLenses ''GatherState
 
 convertStackOutput :: Text -> Text
 convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip processLine) (ParseState WaitingForError DList.empty) $ lines allInput
@@ -83,11 +85,17 @@ convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip 
       firstLetterOf :: Text -> Maybe Char
       firstLetterOf = fmap fst . Text.uncons
 
+addErrorLine :: [Text] -> GatherState -> GatherState 
+addErrorLine = addToDList detailedMessage
+
 changeToParser :: Parser -> ParseState -> ParseState
 changeToParser = set currentParser
 
 addError :: ErrorInformation -> ParseState -> ParseState
-addError newError = over errors (`DList.snoc` newError)
+addError = addToDList errors
+
+addToDList :: Lens' container (DList a) -> a -> container -> container
+addToDList setter newThing = over setter (`DList.snoc` newThing)
 
 makeInformation :: [Text] -> [Text] -> ErrorInformation
 makeInformation errorLine firstErrorMessageLine =
