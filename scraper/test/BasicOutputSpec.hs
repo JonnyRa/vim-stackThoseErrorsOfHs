@@ -24,12 +24,7 @@ spec = do
 basicTest :: Spec
 basicTest = describe "basic output with one error gets parsed" $
   it "produces 1 output line" $
-    expectOutput basicError [
-        "/path/project/src/Incremental/Workspaces.hs:470:37:error:Variable not in scope:"
-      ]
-
-basicError :: Text
-basicError = [r|
+    let input = [r|
 project> build (lib)
 Generating ResourceTRACS files...
 Done!
@@ -60,11 +55,18 @@ Error: [S-7282]
        /path/project/.stack-work/dist/x86_64-linux-tinfo6/Cabal-3.8.1.0/setup/setup --verbose=1 --builddir=.stack-work/dist/x86_64-linux-tinfo6/Cabal-3.8.1.0 build lib:project --ghc-options " -fdiagnostics-color=always"
        Process exited with code: ExitFailure 1 
 Type help for the available commands. Press enter to force a rebuild.|]
+    in
+    expectOutput input [
+        "/path/project/src/Incremental/Workspaces.hs:470:37:error:Variable not in scope:"
+      ]
 
 
 
-twoErrors :: Text
-twoErrors = [r|
+
+twoErrorsTest :: Spec
+twoErrorsTest = describe "multiple errors" $ 
+  it "errors are output in the right order" $ 
+    let input = [r|
 trent-model> build (lib)
 Generating ResourceTRACS files...
 Done!
@@ -107,18 +109,16 @@ Error: [S-7282]
        /path/project/.stack-work/dist/x86_64-linux-tinfo6/Cabal-3.8.1.0/setup/setup --verbose=1 --builddir=.stack-work/dist/x86_64-linux-tinfo6/Cabal-3.8.1.0 build lib:trent-model --ghc-options " -fdiagnostics-color=always"
        Process exited with code: ExitFailure 1 
 Type help for the available commands. Press enter to force a rebuild.|]
-
-
-twoErrorsTest :: Spec
-twoErrorsTest = describe "multiple errors" $ 
-  it "errors are output in the right order" $ 
-    expectOutput twoErrors [
+    in
+    expectOutput input [
         "/path/project/src/Incremental/Workspaces.hs:470:37:error:Variable not in scope:"
       , "/path/project/src/Incremental/Workspaces.hs:536:14:error:Variable not in scope:"
       ]
 
-projectPrefixedErrors :: Text
-projectPrefixedErrors = [r|
+projectPrefixedTest :: Spec
+projectPrefixedTest = describe "basic interleaved output" $
+  it "can process well ordered errors with module prefixes" $
+    let input = [r|
 trent-testing         > configure (lib + exe)
 trent-testing         > Configuring trent-testing-0.1.0.0...
 trent-testing         > build (lib + exe)
@@ -144,16 +144,15 @@ Error: [S-7282]
        /path/.stack/setup-exe-cache/x86_64-linux-tinfo6/Cabal-simple_6HauvNHV_3.8.1.0_ghc-9.4.7 --verbose=1 --builddir=.stack-work/dist/x86_64-linux-tinfo6/Cabal-3.8.1.0 build lib:trent-testing exe:read-events exe:write-events --ghc-options " -fdiagnostics-color=always"
        Process exited with code: ExitFailure 1 
 Type help for the available commands. Press enter to force a rebuild.|]
-
-projectPrefixedTest :: Spec
-projectPrefixedTest = describe "basic interleaved output" $
-  it "can process well ordered errors with module prefixes" $
-    expectOutput projectPrefixedErrors [
+    in
+    expectOutput input [
         "/path/src/Test/ModelHelper.hs:121:3:error:Illegal use of punning for field ‘modelSettingsOldValidation’"
       ]
 
-projectPrefixedNoSpaceErrors :: Text
-projectPrefixedNoSpaceErrors = [r|
+projectPrefixedNoSpaceTest :: Spec
+projectPrefixedNoSpaceTest = describe "basic interleaved output with no space after project name" $
+  it "can process errors for module prefixes that have no space before `>`" $
+    let input = [r|
 a-longer-path> [432 of 810] Compiling TestUtils.ControlModelTracking [TestUtils package changed]
 a-longer-path> [504 of 810] Compiling SeleniumTests.CrewDiagramming.DiagramEditor.Skills [Source file changed]
 a-longer-path> /path/project/selenium/SeleniumTests/CrewDiagramming/DiagramEditor/Skills.hs:11:51: error:
@@ -169,16 +168,15 @@ short-path   > Building library for trent-database-tests-0.1.0.0..
 short-path   > copy/register
 
 Type help for the available commands. Press enter to force a rebuild.|]
-
-projectPrefixedNoSpaceTest :: Spec
-projectPrefixedNoSpaceTest = describe "basic interleaved output with no space after project name" $
-  it "can process errors for module prefixes that have no space before `>`" $
-    expectOutput projectPrefixedNoSpaceErrors [
+    in
+    expectOutput input [
         "/path/project/selenium/SeleniumTests/CrewDiagramming/DiagramEditor/Skills.hs:11:51:error:Module"
       ]
 
-typeSignatureInErrorMessageNotInterleaved :: Text
-typeSignatureInErrorMessageNotInterleaved = [r|
+typeSignatureInErrorMessageNotInterleavedTest :: Spec
+typeSignatureInErrorMessageNotInterleavedTest = describe "type signature in uninterleaved output" $
+  it "the error message isn't truncated because of the `>` in the type signature" $
+    let input = [r|
 /path/src/Handler/Tim/Api.hs:136:1: error:
     • Couldn't match type ‘Maybe Text -> FormationIssues’
                      with ‘FormationIssues’
@@ -198,16 +196,15 @@ typeSignatureInErrorMessageNotInterleaved = [r|
     |
 136 | getTrainFormationIssuesApi _env day mText = do
     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^|]
-
-typeSignatureInErrorMessageNotInterleavedTest :: Spec
-typeSignatureInErrorMessageNotInterleavedTest = describe "type signature in uninterleaved output" $
-  it "the error message isn't truncated because of the `>` in the type signature" $
-    expectOutput typeSignatureInErrorMessageNotInterleaved [
+    in
+    expectOutput input [
         "/path/src/Handler/Tim/Api.hs:136:1:error:• Couldn't match type ‘Maybe Text -> FormationIssues’"
       ]
 
-extractExtraDetailsInput :: Text
-extractExtraDetailsInput = [r|
+extractExtraDetailsTest :: Spec
+extractExtraDetailsTest = describe "long error messages" $
+  it "messages spread over multiple lines are collected and concatenated" $
+    let input = [r|
 /path.hs:32:46: warning: [GHC-38856] [-Wunused-imports]
     The import of ‘makeOvernightTurnaroundDirt’
     from module ‘Model.Control.MakeVexDirt’ is redundant
@@ -223,12 +220,8 @@ extractExtraDetailsInput = [r|
    |
 72 |   makeRouteRestrictionViolationExceptionDirt d s AllDiry
    |                                                  ^^^^^^^|]
-
-
-extractExtraDetailsTest :: Spec
-extractExtraDetailsTest = describe "long error messages" $
-  it "messages spread over multiple lines are collected and concatenated" $
-    expectOutput extractExtraDetailsInput [
+    in
+    expectOutput input [
         "/path.hs:32:46:warning: [GHC-38856] [-Wunused-imports]The import of ‘makeOvernightTurnaroundDirt’ from module ‘Model.Control.MakeVexDirt’ is redundant"
       , "/path.hs:72:50:error: [GHC-88464]Data constructor not in scope: AllDiry :: DirtyIdSet VehicleDiagramId Suggested fix: Perhaps use ‘AllDirty’ (imported from Types.Cacheing)"
       ]
