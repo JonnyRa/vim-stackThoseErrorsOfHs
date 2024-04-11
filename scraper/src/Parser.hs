@@ -102,7 +102,7 @@ makeInformation GatherState{..} =
   ErrorInformation {
     _errorLocation = head adjustedError
   , _errorType = unwords $ drop 1 adjustedError
-  , _errorMessage = unlines $ map unwords $ toList adjustedMessage
+  , _errorMessage = unwords $ map unwords $ toList adjustedMessage
   }
 
   where
