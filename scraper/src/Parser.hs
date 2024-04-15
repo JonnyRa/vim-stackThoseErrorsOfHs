@@ -2,6 +2,7 @@
 {-# Language OverloadedStrings #-}
 {-# Language TemplateHaskell #-}
 {-# Language RankNTypes #-}
+{-# LANGUAGE QuasiQuotes #-}
 
 module Parser 
 ( convertStackOutput
@@ -20,6 +21,7 @@ import Text.Regex.TDFA
 import Lens.Micro hiding (both)
 import Lens.Micro.TH
 import Data.Bifunctor
+import Text.RawString.QQ
 
 data ParseState = ParseState {
   _currentParser :: Parser
@@ -83,7 +85,21 @@ convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip 
       --    |                                     ^^^
       if firstLetterOfLine == Just '|'
       then changeToParser WaitingForError $ addError (makeInformation gatherState) currentState 
+      else if isUnrelatedInterleavedLine
+      --continue gathering message but just ignore this line
+      then currentState
       else changeToParser (GatheringErrorMessage $ addErrorLine lineContent gatherState) currentState 
+      
+      where
+      --this is to match/ignore things like:
+      --[807 of 873] Compiling Handler.Rosters.Gantt [Foundation.App changed]
+      --which sometimes get interleaved
+      isUnrelatedInterleavedLine :: Bool
+      isUnrelatedInterleavedLine =
+        line =~ regex
+        where
+        regex :: Text
+        regex = [r|\[[[:digit:]]+ of [[:digit:]]+\]|]
 
     firstLetterOfLine :: Maybe Char
     firstLetterOfLine = firstLetterOf =<< listToMaybe lineContent
