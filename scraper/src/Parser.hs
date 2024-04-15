@@ -78,17 +78,15 @@ convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip 
       then changeToParser (GatheringErrorMessage $ GatherState lineContent mempty) currentState
       else changeToParser WaitingForError currentState
 
-    parseLine (GatheringErrorMessage gatherState) =
+    parseLine (GatheringErrorMessage gatherState)
       -- relying on error messages being terminated with blocks that look like this:
       --    |
       --470 |   getLightDiagram crewDiagId scheme <|> (getDiagramForValidationFromShadow =<< getShadowDiagram crewDiagId scheme)
       --    |                                     ^^^
-      if firstLetterOfLine == Just '|'
-      then changeToParser WaitingForError $ addError (makeInformation gatherState) currentState 
-      else if isUnrelatedInterleavedLine
+      | firstLetterOfLine == Just '|' = changeToParser WaitingForError $ addError (makeInformation gatherState) currentState 
       --continue gathering message but just ignore this line
-      then currentState
-      else changeToParser (GatheringErrorMessage $ addErrorLine lineContent gatherState) currentState 
+      | isUnrelatedInterleavedLine = currentState
+      | otherwise = changeToParser (GatheringErrorMessage $ addErrorLine lineContent gatherState) currentState 
       
       where
       --this is to match/ignore things like:
