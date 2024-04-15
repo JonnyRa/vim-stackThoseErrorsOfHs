@@ -49,7 +49,7 @@ Error: [S-7282]
 Type help for the available commands. Press enter to force a rebuild.|]
     in
     expectOutput input [
-        "/path/project/src/Incremental/Workspaces.hs:470:37:error:Variable not in scope:"
+        "/path/project/src/Incremental/Workspaces.hs:470:37:error:Variable not in scope: (<|>) :: Maybe CrewDiag.CrewDiagram -> Maybe CrewDiag.CrewDiagram -> Maybe CrewDiag.CrewDiagram Suggested fix: Perhaps use one of these: ‘<>’ (imported from Prelude), ‘<$>’ (imported from Prelude), ‘<*>’ (imported from Prelude)"
       ]
 
   it "multiple errors - errors are output in the right order" $ 
@@ -98,8 +98,8 @@ Error: [S-7282]
 Type help for the available commands. Press enter to force a rebuild.|]
     in
     expectOutput input [
-        "/path/project/src/Incremental/Workspaces.hs:470:37:error:Variable not in scope:"
-      , "/path/project/src/Incremental/Workspaces.hs:536:14:error:Variable not in scope:"
+        "/path/project/src/Incremental/Workspaces.hs:470:37:error:Variable not in scope: (<|>) :: Maybe CrewDiag.CrewDiagram -> Maybe CrewDiag.CrewDiagram -> Maybe CrewDiag.CrewDiagram Suggested fix: Perhaps use one of these: ‘<>’ (imported from Prelude), ‘<$>’ (imported from Prelude), ‘<*>’ (imported from Prelude)"
+      , "/path/project/src/Incremental/Workspaces.hs:536:14:error:Variable not in scope: fromMaybe :: [a1] -> Maybe [ValidationItem] -> [ValidationItem] Suggested fixes: • Perhaps use ‘Strict.fromMaybe’ (imported from Data.Strict) • Perhaps you want to add ‘fromMaybe’ to the import list in the import of ‘Data.Maybe’ (src/Incremental/Workspaces.hs:43:1-65)."
       ]
 
   it "basic interleaved output - can process well ordered errors with module prefixes" $
@@ -131,7 +131,7 @@ Error: [S-7282]
 Type help for the available commands. Press enter to force a rebuild.|]
     in
     expectOutput input [
-        "/path/src/Test/ModelHelper.hs:121:3:error:Illegal use of punning for field ‘modelSettingsOldValidation’"
+        "/path/src/Test/ModelHelper.hs:121:3:error:Illegal use of punning for field ‘modelSettingsOldValidation’ Suggested fix: Perhaps you intended to use NamedFieldPuns"
       ]
 
   it "basic interleaved output with no space after project name - can process errors for module prefixes that have no space before `>`" $
@@ -153,7 +153,7 @@ short-path   > copy/register
 Type help for the available commands. Press enter to force a rebuild.|]
     in
     expectOutput input [
-        "/path/project/selenium/SeleniumTests/CrewDiagramming/DiagramEditor/Skills.hs:11:51:error:Module"
+        "/path/project/selenium/SeleniumTests/CrewDiagramming/DiagramEditor/Skills.hs:11:51:error:Module ‘Test.Planning.Units.TestCode’ does not export ‘execPlanningFromArgs’"
       ]
 
   it "type signature in uninterleaved output - the error message isn't truncated because of the `>` in the type signature" $
@@ -179,7 +179,7 @@ Type help for the available commands. Press enter to force a rebuild.|]
     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^|]
     in
     expectOutput input [
-        "/path/src/Handler/Tim/Api.hs:136:1:error:• Couldn't match type ‘Maybe Text -> FormationIssues’"
+        "/path/src/Handler/Tim/Api.hs:136:1:error:• Couldn't match type ‘Maybe Text -> FormationIssues’ with ‘FormationIssues’ Expected: Servant.Server.Internal.ServerT TrainFormationIssuesAPI ServantApiReader Actual: Date -> Maybe TrainExceptionMap -> ReaderT ApiConfig Servant.Server.Internal.Handler.Handler (Maybe Text -> FormationIssues) • The equation for ‘getTrainFormationIssuesApi’ has three value arguments, but its type ‘ServantApiEnv -> Servant.Server.Internal.ServerT TrainFormationIssuesAPI ServantApiReader’ has only one"
       ]
 
   it "long error messages - messages spread over multiple lines are collected and concatenated" $
