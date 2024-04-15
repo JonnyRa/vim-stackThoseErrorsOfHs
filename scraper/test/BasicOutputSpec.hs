@@ -205,6 +205,24 @@ Type help for the available commands. Press enter to force a rebuild.|]
       , "/path.hs:72:50:error: [GHC-88464]Data constructor not in scope: AllDiry :: DirtyIdSet VehicleDiagramId Suggested fix: Perhaps use ‘AllDirty’ (imported from Types.Cacheing)"
       ]
 
+  --note this is a different kind of interleaved than when multiple packages are building at once
+  it "interleaved output is stripped from error details" $
+    let input = [r|
+/path.hs:21:60: error: [GHC-61689]
+[807 of 873] Compiling Handler.Rosters.Gantt [Foundation.App changed]
+    Module ‘Types.Control.ControlModel’ does not export ‘vexCache’.
+[808 of 873] Compiling Handler.Leave.Helper.Base [Foundation.App changed]
+   |
+[809 of 873] Compiling Handler.Leave.Helper.Types [Handler.Leave.Helper.Base changed]
+21 | import Types.Control.ControlModel        (getOnTheDayWork, vexCache)
+[810 of 873] Compiling Handler.Leave.Helper.Widget [Foundation.YesodData changed]
+   ||]
+
+    in
+    expectOutput input [
+        "/path.hs:21:60:error: [GHC-61689]Module ‘Types.Control.ControlModel’ does not export ‘vexCache’."
+      ]
+
 expectOutput :: Text -> [Text] -> Expectation
 expectOutput input expected =
     lines (convertStackOutput input) `shouldBe` expected
