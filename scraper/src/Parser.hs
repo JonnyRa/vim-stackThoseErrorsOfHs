@@ -74,11 +74,14 @@ convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip 
 
     showsStartOfError :: Bool
     showsStartOfError = any (`elem` ["error:", "warning:"]) lineContent && firstLetterOfLine == Just '/'
-      
+
+    startCollectingNewError :: ParseState 
+    startCollectingNewError = changeToParser (GatheringErrorMessage $ GatherState lineContent mempty) currentState
+
     parseLine :: Parser -> ParseState
     parseLine WaitingForError =
       if showsStartOfError
-      then changeToParser (GatheringErrorMessage $ GatherState lineContent mempty) currentState
+      then startCollectingNewError
       else changeToParser WaitingForError currentState
 
     parseLine (GatheringErrorMessage gatherState)
