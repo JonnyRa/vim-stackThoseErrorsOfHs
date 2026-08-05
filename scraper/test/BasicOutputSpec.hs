@@ -252,7 +252,7 @@ Building library for godot-haskell-3.4.4.0..
 
     in
     expectOutput input [
-        "/path.hs:21:60:error: [GHC-61689]Module ‘Types.Control.ControlModel’ does not export ‘vexCache’."
+        "/home/jonny/repos/godot-haskell/src/Godot/Core/GLTFState.hs:116:14:error: • Couldn't match type ‘Array’ with ‘PoolIntArray’"
       ]
 
 expectOutput :: Text -> [Text] -> Expectation
