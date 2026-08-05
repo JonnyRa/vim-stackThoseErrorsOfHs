@@ -252,7 +252,7 @@ Building library for godot-haskell-3.4.4.0..
 
     in
     expectOutput input [
-        "/home/jonny/repos/godot-haskell/src/Godot/Core/GLTFState.hs:116:14:error: • Couldn't match type ‘Array’ with ‘PoolIntArray’"
+        "/home/jonny/repos/godot-haskell/src/Godot/Core/GLTFState.hs:116:14:error:• Couldn't match type ‘Array’ with ‘PoolIntArray’ Expected type: GLTFState -> IO PoolIntArray Actual type: GLTFState -> IO Array • In the expression: get_root_nodes In the expression: (get_root_nodes, wrapDroppingSetter set_root_nodes, Nothing) In an equation for ‘nodeProperty’: nodeProperty = (get_root_nodes, wrapDroppingSetter set_root_nodes, Nothing)"
       ]
 
 expectOutput :: Text -> [Text] -> Expectation
