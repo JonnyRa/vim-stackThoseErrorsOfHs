@@ -72,12 +72,12 @@ convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip 
         regex :: Text
         regex = "^[-[:word:]]+ *>"
 
-    showsStartOfError :: [Text] -> Bool
-    showsStartOfError lineContent = any (`elem` ["error:", "warning:"]) lineContent && firstLetterOfLine == Just '/'
+    showsStartOfError :: Bool
+    showsStartOfError = any (`elem` ["error:", "warning:"]) lineContent && firstLetterOfLine == Just '/'
       
     parseLine :: Parser -> ParseState
     parseLine WaitingForError =
-      if showsStartOfError lineContent
+      if showsStartOfError
       then changeToParser (GatheringErrorMessage $ GatherState lineContent mempty) currentState
       else changeToParser WaitingForError currentState
 
