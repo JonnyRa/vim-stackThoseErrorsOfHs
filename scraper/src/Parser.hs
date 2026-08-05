@@ -85,6 +85,8 @@ convertStackOutput allInput = convertToOutput $ toList $ _errors $ foldl' (flip 
       else changeToParser WaitingForError currentState
 
     parseLine (GatheringErrorMessage gatherState)
+      --this is to get rid of c errors that don't have a proper error message
+      | showsStartOfError = startCollectingNewError
       -- relying on error messages being terminated with blocks that look like this:
       --    |
       --470 |   getLightDiagram crewDiagId scheme <|> (getDiagramForValidationFromShadow =<< getShadowDiagram crewDiagId scheme)
